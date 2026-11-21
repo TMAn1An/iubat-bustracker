@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0b6e1c">
+  <title>IUBAT Bus Tracker</title>
+  <meta name="description" content="Live location of IUBAT campus buses on a 3D map: every route, where each bus is, where it is going and when it arrives.">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="icon" type="image/png" sizes="48x48" href="/assets/icons/favicon-48.png">
+  <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="IUBAT Bus">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="IUBAT Bus Tracker">
+  <meta property="og:title" content="IUBAT Bus Tracker: campus buses, live">
+  <meta property="og:description" content="See every IUBAT bus route and follow your bus live on a 3D map.">
+  <meta property="og:url" content="https://iubat-bustracker.vercel.app/">
+  <meta property="og:image" content="https://iubat-bustracker.vercel.app/assets/og.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="vendor/maplibre-gl.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ============ Sign in ============ -->
+<main id="login" class="login">
+  <section class="login-art" aria-hidden="true">
+    <div class="art-copy">
+      <span class="art-tag">Live · Campus Bus</span>
+      <h2>Where is your bus right now?<br>See it at a glance.</h2>
+      <p>Bus number, destination and arrival time, live on a 3D map.</p>
+    </div>
+    <svg class="art-bus" viewBox="0 0 720 330" role="img" aria-label="Illustration of an IUBAT campus bus">
+  <defs>
+    <linearGradient id="bBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd84a"/><stop offset=".55" stop-color="#f7c600"/><stop offset="1" stop-color="#e0ac00"/></linearGradient>
+    <linearGradient id="bGlass" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#46698c"/><stop offset="1" stop-color="#1b2e44"/></linearGradient>
+    <linearGradient id="bShine" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".45"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+    <clipPath id="bClip"><path d="M44,100 Q44,74 70,74 H586 Q618,74 634,100 L666,168 Q672,180 672,194 V250 Q672,262 660,262 H56 Q44,262 44,250Z"/></clipPath>
+  </defs>
+  <ellipse cx="360" cy="304" rx="330" ry="12" fill="#000" opacity=".30"/>
+  <path d="M44,100 Q44,74 70,74 H586 Q618,74 634,100 L666,168 Q672,180 672,194 V250 Q672,262 660,262 H56 Q44,262 44,250Z" fill="url(#bBody)"/>
+  <g clip-path="url(#bClip)">
+    <rect x="44" y="74" width="628" height="14" fill="url(#bShine)"/>
+    <rect x="44" y="214" width="628" height="5" fill="#d92d20"/>
+    <rect x="44" y="222" width="628" height="2.5" fill="#17211b"/>
+    <rect x="44" y="238" width="628" height="26" fill="#1d2a22"/>
+    <line x1="576" y1="96" x2="576" y2="236" stroke="#000" stroke-opacity=".22" stroke-width="2"/>
+  </g>
+  <rect x="220" y="63" width="220" height="12" rx="6" fill="#eceeed" stroke="#c4cac6"/>
+  <rect x="72" y="98" width="92" height="74" rx="6" fill="url(#bGlass)"/><path d="M82,98 h30 l-24,74 h-22z" fill="#fff" opacity=".10"/><rect x="172" y="98" width="92" height="74" rx="6" fill="url(#bGlass)"/><path d="M182,98 h30 l-24,74 h-22z" fill="#fff" opacity=".10"/><rect x="272" y="98" width="92" height="74" rx="6" fill="url(#bGlass)"/><path d="M282,98 h30 l-24,74 h-22z" fill="#fff" opacity=".10"/><rect x="372" y="98" width="92" height="74" rx="6" fill="url(#bGlass)"/><path d="M382,98 h30 l-24,74 h-22z" fill="#fff" opacity=".10"/><rect x="472" y="98" width="92" height="74" rx="6" fill="url(#bGlass)"/><path d="M482,98 h30 l-24,74 h-22z" fill="#fff" opacity=".10"/>
+  <path d="M584,98 H612 Q626,98 634,112 L654,168 H584Z" fill="url(#bGlass)"/>
+  <path d="M594,98 h14 l-16,70 h-8z" fill="#fff" opacity=".10"/>
+  <rect x="590" y="80" width="46" height="13" rx="3" fill="#10140f"/>
+  <text x="613" y="90.5" text-anchor="middle" font-size="8.5" font-weight="700" letter-spacing="1" fill="#ffb000">CAMPUS</text>
+  <image href="assets/logo.png" x="72" y="176" width="40" height="35"/>
+  <text x="122" y="203" font-size="25" font-weight="800" fill="#17211b" font-family="Inter,system-ui,sans-serif">IUBAT</text>
+  <text x="206" y="202" font-size="11.5" font-weight="600" fill="#3d3300" font-family="Inter,system-ui,sans-serif" textLength="352" lengthAdjust="spacingAndGlyphs">International University of Business, Agriculture &amp; Technology</text>
+  <rect x="656" y="196" width="20" height="14" rx="5" fill="#fff8d1"/>
+  <rect x="658" y="214" width="14" height="6" rx="3" fill="#f59e0b"/>
+  <rect x="648" y="242" width="28" height="14" rx="4" fill="#2a332d"/>
+  <path d="M652,106 h16 v34 h-16z M652,118 h-6" fill="#17211b" stroke="#17211b" stroke-width="2" stroke-linejoin="round"/>
+  <g>
+    <circle cx="190" cy="262" r="50" fill="#101311"/><circle cx="190" cy="262" r="40" fill="#1f2522"/><circle cx="190" cy="262" r="25" fill="#d2d8d5"/><circle cx="190" cy="262" r="17" fill="#98a29e"/><circle cx="190" cy="262" r="7" fill="#58625e"/>
+    <circle cx="546" cy="262" r="50" fill="#101311"/><circle cx="546" cy="262" r="40" fill="#1f2522"/><circle cx="546" cy="262" r="25" fill="#d2d8d5"/><circle cx="546" cy="262" r="17" fill="#98a29e"/><circle cx="546" cy="262" r="7" fill="#58625e"/>
+  </g>
+</svg>
+    <div class="art-road"></div>
+  </section>
+
+  <form id="loginForm" class="login-card" autocomplete="on" novalidate>
+    <img class="login-logo" src="assets/logo.png" alt="IUBAT logo">
+    <h1>Bus Tracker</h1>
+    <p class="sub">International University of Business Agriculture and Technology</p>
+
+    <label class="field">
+      <span>Student ID</span>
+      <input id="sid" name="username" inputmode="numeric" autocomplete="username" placeholder="e.g. 2025001" required>
+    </label>
+    <label class="field">
+      <span>Password</span>
+      <div class="pw">
+        <input id="pw" name="password" type="password" autocomplete="current-password" placeholder="••••••••" required>
+        <button type="button" id="pwToggle" class="ghost" aria-label="Show password">Show</button>
+      </div>
+    </label>
+    <p id="loginErr" class="err" role="alert" hidden></p>
+    <button class="btn primary" type="submit">Sign in</button>
+    <p class="hint">Use your university student ID and password.</p>
+    <p class="hint"><a href="/privacy.html">Privacy</a></p>
+  </form>
+</main>
+
+<!-- ============ App ============ -->
+<div id="app" class="app" hidden>
+  <header class="topbar">
+    <div class="brand">
+      <img src="assets/logo.png" alt="">
+      <div><strong>IUBAT Bus Tracker</strong><small>Campus bus · live location</small></div>
+    </div>
+    <div class="top-right">
+      <span class="live"><i></i> LIVE</span>
+      <button class="bell" id="bell" aria-label="Notices" title="Notices"><svg class="i" viewBox="0 0 24 24"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><b id="bellCount" hidden></b></button>
+      <span class="user" id="userChip">Student</span>
+      <button class="ghost light install" id="installBtn" hidden>Install app</button>
+      <button class="ghost light" id="logout">Sign out</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="panel" id="panel">
+      <button class="handle" id="handle" aria-label="Expand or collapse panel"><span></span></button>
+      <div class="notices" id="notices" aria-live="polite"></div>
+      <div class="panel-body" id="panelBody"></div>
+    </aside>
+
+    <section class="stage">
+      <div id="map" role="application" aria-label="3D bus map"></div>
+      <div class="map-msg" id="mapMsg" role="status" hidden></div>
+
+      <div class="tools" role="toolbar" aria-label="Map controls">
+        <button id="tView" class="tool wide" title="Toggle 3D / 2D">3D</button>
+        <button id="tRotL" class="tool" title="Rotate left" aria-label="Rotate left">&#10226;</button>
+        <button id="tRotR" class="tool" title="Rotate right" aria-label="Rotate right">&#10227;</button>
+        <button id="tZin" class="tool" title="Zoom in" aria-label="Zoom in">+</button>
+        <button id="tZout" class="tool" title="Zoom out" aria-label="Zoom out">&minus;</button>
+        <button id="tLoc" class="tool" title="Follow bus" aria-label="Follow bus">&#9678;</button>
+      </div>
+
+      <div class="legend">
+        <span><i class="dot run"></i> Running</span>
+        <span><i class="dot stop"></i> Stopped</span>
+        <span><i class="dot est"></i> Estimated</span>
+        <span><i class="dot off"></i> Offline</span>
+      </div>
+      <div class="conn" id="conn" hidden>Connection lost, retrying&hellip;</div>
+      <div class="ntoast" id="ntoast" role="status" hidden></div>
+    </section>
+  </div>
+</div>
+
+<dialog id="shareDlg" class="sdlg">
+  <form method="dialog">
+    <h3>Share your location for this bus?</h3>
+    <ul>
+      <li>Other students will see <b>the bus</b> move on the map. They will not see your name or ID.</li>
+      <li>Your location is used only while you are <b>on this bus route and moving with the bus</b>. It is checked automatically, so sharing from home will not work.</li>
+      <li>The transport office can see who is sharing, to stop misuse.</li>
+      <li>Keep this app open. Sharing stops when the bus reaches the end of the route, or when you tap Stop.</li>
+    </ul>
+    <div class="row"><button value="no" class="btn ghost-b">Cancel</button><button value="yes" class="btn primary">Share location</button></div>
+  </form>
+</dialog>
+
+<script src="vendor/maplibre-gl.js"></script>
+<script src="js/feed.js"></script>
+<script src="js/bus3d.js"></script>
+<script src="js/map.js"></script>
+<script src="js/share.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

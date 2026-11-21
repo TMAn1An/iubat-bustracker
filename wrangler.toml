@@ -1,0 +1,19 @@
+# Cloudflare Workers (free plan): static app + /api/* in one Worker.
+name = "iubat-bustracker"
+main = "worker.js"
+compatibility_date = "2025-06-01"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+PRODUCTION = "1"
+# Secrets (set with `wrangler secret put`): TURSO_DATABASE_URL, TURSO_AUTH_TOKEN, SESSION_SECRET
+
+[assets]
+directory = "."
+binding = "ASSETS"
+not_found_handling = "404-page"
+run_worker_first = ["/api/*"]
+
+# Workers cannot use the Node/SQLite build of the database client: use the HTTP ("web") build.
+[alias]
+"@libsql/client" = "@libsql/client/web"

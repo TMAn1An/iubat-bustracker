@@ -1,0 +1,23 @@
+# Files that must NOT be published as static assets on Cloudflare
+.git
+.github
+.wrangler
+.vercel
+node_modules
+api
+db
+scripts
+worker.js
+wrangler.toml
+package.json
+package-lock.json
+vercel.json
+.vercelignore
+.gitignore
+.assetsignore
+README.md
+local.db
+local.db-*
+.env*
+.dev.vars
+.bus-tokens.json

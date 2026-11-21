@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b6e1c">
+<title>Privacy · IUBAT Bus Tracker</title>
+<link rel="icon" type="image/png" href="/assets/icons/favicon-48.png">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --green:#0b6e1c; --ink:#17211b; --muted:#6b766f; --line:#e4e8e2; }
+  body { margin:0; font-family:"Inter",system-ui,sans-serif; color:var(--ink); background:#f5f6f3; line-height:1.65; }
+  header { background:var(--green); color:#fff; padding:16px 20px; display:flex; align-items:center; gap:12px; }
+  header img { height:34px; background:#fff; border-radius:8px; padding:3px 5px; }
+  main { max-width:720px; margin:0 auto; padding:28px 20px 60px; }
+  .card { background:#fff; border:1px solid var(--line); border-radius:12px; padding:22px 24px; }
+  h1 { font-size:26px; margin:0 0 6px; } h2 { font-size:17px; margin:24px 0 6px; } p, li { font-size:15px; } .muted { color:var(--muted); }
+  a { color:var(--green); }
+</style>
+</head>
+<body>
+<header><img src="/assets/logo.png" alt="IUBAT"><strong>IUBAT Bus Tracker</strong></header>
+<main><div class="card">
+  <h1>Privacy</h1>
+  <p class="muted">How the bus tracker uses information.</p>
+
+  <h2>Signing in</h2>
+  <p>You sign in with your student ID and password. Passwords are stored only as secure hashes. To stop password guessing, we keep a short record of failed sign-in attempts (account and network address) for up to 24 hours.</p>
+
+  <h2>Bus locations</h2>
+  <p>Each bus phone sends the bus's location while it is on duty. We keep only the latest position of each bus, not a history.</p>
+
+  <h2>If you share your location for a bus</h2>
+  <ul>
+    <li>Sharing is optional and starts only when you tap <b>Share location</b> and agree. You can stop at any time.</li>
+    <li>Your location is checked automatically (are you on that bus route and moving with the bus?). Only a checked location is used to move the bus on the map.</li>
+    <li>Other students see the bus, never your name or ID.</li>
+    <li>The transport office can see which student IDs are sharing, to prevent misuse, and can block sharing.</li>
+    <li>We keep only your last few minutes of positions while you share, and delete them when you stop or the bus reaches the end of the route.</li>
+  </ul>
+
+  <h2>Map</h2>
+  <p>The map uses OpenStreetMap data served by OpenFreeMap. Your browser loads map images from them, which means they can see your network address, as with any website.</p>
+
+  <h2>Questions</h2>
+  <p>Contact the IUBAT transport office.</p>
+  <p><a href="/">Back to the bus tracker</a></p>
+</div></main>
+</body>
+</html>

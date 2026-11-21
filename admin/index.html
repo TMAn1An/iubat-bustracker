@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#0b6e1c">
+  <title>IUBAT Bus Tracker · Admin</title>
+  <link rel="icon" type="image/png" href="../assets/icons/favicon-48.png">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../vendor/maplibre-gl.css">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body class="admin">
+
+<main id="signin" class="a-signin">
+  <form id="signinForm" class="a-card a-signin-card">
+    <img src="../assets/logo.png" alt="IUBAT" width="64">
+    <h1>Admin sign in</h1>
+    <p class="muted">Manage buses, routes and stops.</p>
+    <label class="field"><span>Username</span><input id="au" autocomplete="username" required></label>
+    <label class="field"><span>Password</span><input id="ap" type="password" autocomplete="current-password" required></label>
+    <p id="aerr" class="err" hidden></p>
+    <button class="btn primary">Sign in</button>
+  </form>
+</main>
+
+<div id="adminApp" hidden>
+  <header class="topbar">
+    <div class="brand"><img src="../assets/logo.png" alt=""><div><strong>IUBAT Bus Tracker</strong><small>Admin dashboard</small></div></div>
+    <div class="top-right">
+      <nav class="tabs" role="tablist">
+        <button role="tab" data-tab="buses" aria-selected="true">Buses</button>
+        <button role="tab" data-tab="routes" aria-selected="false">Routes</button>
+        <button role="tab" data-tab="notices" aria-selected="false">Notices</button>
+        <button role="tab" data-tab="sharing" aria-selected="false">Sharing</button>
+      </nav>
+      <button class="ghost light" id="aout">Sign out</button>
+    </div>
+  </header>
+
+  <!-- Buses -->
+  <section id="tab-buses" class="a-page">
+    <div class="a-head">
+      <div><h2>Buses</h2><p class="muted">Set each bus number, its route and departure times. Each bus phone uses its own tracker token.</p></div>
+      <form id="addBus" class="a-inline">
+        <input id="newBusNo" placeholder="Bus no. (e.g. 12)" maxlength="10" required aria-label="New bus number">
+        <span class="a-sel"><select id="newBusRoute" aria-label="Route"></select><small class="also" id="newBusAlso"></small></span>
+        <button class="btn primary sm">Add bus</button>
+      </form>
+    </div>
+    <div class="a-card a-table-wrap">
+      <table class="a-table">
+        <thead><tr><th>Bus no.</th><th>Route</th><th>Leaves start</th><th>Leaves campus</th><th>Days</th><th>Last seen</th><th class="r">Actions</th></tr></thead>
+        <tbody id="busRows"></tbody>
+      </table>
+      <p id="busEmpty" class="muted a-empty" hidden>No buses yet. Add one above.</p>
+    </div>
+  </section>
+
+  <!-- Routes -->
+  <section id="tab-routes" class="a-page a-routes" hidden>
+    <aside class="a-card a-rlist">
+      <div class="a-rlist-head"><strong>Routes</strong><button class="btn primary sm" id="newRoute">+ New route</button></div>
+      <ul id="routeList"></ul>
+    </aside>
+
+    <div class="a-editor">
+      <div class="a-card a-form" id="routeForm" hidden>
+        <div class="a-row">
+          <label class="field grow"><span>Route name</span><input id="rName" maxlength="60" placeholder="e.g. Rajendrapur"></label>
+          <label class="field"><span>Line colour</span><input id="rColor" type="color" value="#0b6e1c"></label>
+        </div>
+        <p class="small also-route" id="rBuses"></p>
+        <p class="muted small">Stops go in driving order, starting from the far end; the route always ends at IUBAT Campus.
+          Add them by <b>clicking the map</b>, by <b>searching</b> a place, or paste the whole list with <b>Add stops in bulk</b>. Drag a marker to fix its position.</p>
+        <div class="a-row"><button class="btn ghost-btn sm" id="bulkBtn" type="button">Add stops in bulk</button><span id="placing" class="small st-wait" hidden></span></div>
+        <div class="a-stops-head small muted"><span></span><span>Stop</span><span>Pick-up time</span><span></span></div>
+        <ol id="stopList" class="a-stops"></ol>
+        <div class="a-row end">
+          <button class="btn ghost-btn" id="delRoute" type="button">Delete route</button>
+          <span class="grow"></span>
+          <span id="rMsg" class="small muted"></span>
+          <button class="btn primary" id="saveRoute" type="button">Save route</button>
+        </div>
+      </div>
+      <p id="routeHint" class="muted a-empty">Select a route on the left, or create a new one.</p>
+      <div class="a-mapbox"><div id="amap"></div>
+        <form id="placeSearch" class="a-search"><input id="placeQ" placeholder="Search a place (e.g. Board Bazar)" aria-label="Search a place"><button class="btn primary sm">Search</button></form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sharing (crowd mode) -->
+  <section id="tab-sharing" class="a-page" hidden>
+    <div class="a-head"><div><h2>Student location sharing</h2><p class="muted">Riders on a bus can share their phone location for that bus. Every location is checked automatically (on the route, moving like a vehicle, no jumps) before others see it. The bus phone always has priority.</p></div></div>
+    <div class="a-card a-form"><label class="switch"><input type="checkbox" id="crowdOn"><span></span><b>Allow students to share bus location</b></label></div>
+    <h3 class="a-sub">Sharing now (last 30 min)</h3>
+    <div class="a-card a-table-wrap"><table class="a-table"><thead><tr><th>Student ID</th><th>Bus</th><th>Check status</th><th>Started</th><th>Last update</th><th class="r"></th></tr></thead><tbody id="sharerRows"></tbody></table>
+      <p id="sharerEmpty" class="muted a-empty" hidden>Nobody is sharing right now.</p></div>
+    <h3 class="a-sub">Blocked from sharing</h3>
+    <div class="a-card a-table-wrap"><table class="a-table"><tbody id="blockRows"></tbody></table><p id="blockEmpty" class="muted a-empty" hidden>No blocked students.</p></div>
+  </section>
+
+  <!-- Notices -->
+  <section id="tab-notices" class="a-page" hidden>
+    <div class="a-head"><div><h2>Notices</h2><p class="muted">A notice appears in every student's app within a few seconds.</p></div></div>
+    <form id="noticeForm" class="a-card a-form">
+      <label class="field"><span>Message</span><textarea id="nMsg" rows="3" maxlength="500" placeholder="e.g. Bus 11 will leave campus at 6:00 PM today." required></textarea></label>
+      <div class="a-row">
+        <label class="field"><span>Type</span><select id="nLevel"><option value="info">Notice</option><option value="urgent">Urgent</option></select></label>
+        <label class="field"><span>Hide after (optional)</span><input id="nExp" type="datetime-local"></label>
+        <span class="grow"></span>
+        <span id="nCount" class="small muted">0 / 500</span>
+        <button class="btn primary">Publish notice</button>
+      </div>
+    </form>
+    <div class="a-card a-table-wrap" style="margin-top:14px">
+      <table class="a-table"><thead><tr><th>Notice</th><th>Type</th><th>Published</th><th>Status</th><th class="r"></th></tr></thead><tbody id="noticeRows"></tbody></table>
+      <p id="noticeEmpty" class="muted a-empty" hidden>No notices yet.</p>
+    </div>
+  </section>
+</div>
+
+<!-- Notices tab is inside #adminApp; see below -->
+<!-- Bulk stops dialog -->
+<dialog id="bulkDlg" class="a-dlg">
+  <form method="dialog">
+    <h3>Add stops in bulk</h3>
+    <p class="muted small">One stop per line, in driving order (far end first). A pick-up time at the end is optional. Don't include Campus; it is added automatically.
+      Each stop is then looked up on OpenStreetMap near this route. Check every marker; anything not found is marked and can be placed by clicking the map.</p>
+    <textarea id="bulkText" rows="10" placeholder="Rajendrapur Pepsi Gate 6:30 AM
+BIPSOT 6:32 AM
+Public School 6:33 AM"></textarea>
+    <div class="a-row end"><button value="no" class="btn ghost-btn">Cancel</button><button value="yes" class="btn primary">Add &amp; locate</button></div>
+  </form>
+</dialog>
+
+<!-- Token dialog -->
+<dialog id="tokDlg" class="a-dlg">
+  <form method="dialog">
+    <h3 id="tokTitle">Tracker token</h3>
+    <p class="muted small">Shown <b>only once</b>. Open the link on the bus phone (or paste the token into the tracker page) to start sharing location. Generating a new token disables the old one.</p>
+    <label class="field"><span>Token</span><input id="tokVal" readonly></label>
+    <label class="field"><span>Tracker link</span><input id="tokLink" readonly></label>
+    <div class="a-row end"><button type="button" class="btn ghost-btn" id="tokCopy">Copy link</button><button class="btn primary">Done</button></div>
+  </form>
+</dialog>
+
+<datalist id="dayPresets"><option value="Sat–Wed"><option value="Sat–Thu"><option value="Sun–Thu"><option value="Every day"></datalist>
+<div id="toast" class="a-toast" role="status" hidden></div>
+<script src="../vendor/maplibre-gl.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>
